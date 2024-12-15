@@ -33,7 +33,7 @@ async function handleSearchImages(event) {
   if (!term) {
     return;
   }
-
+  listImages.innerHTML = '';
   try {
     const images = await fetchPixabay(term, page);
 
