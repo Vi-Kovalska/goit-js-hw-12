@@ -34,6 +34,7 @@ async function handleSearchImages(event) {
     return;
   }
   listImages.innerHTML = '';
+
   try {
     const images = await fetchPixabay(term, page);
 
@@ -48,7 +49,10 @@ async function handleSearchImages(event) {
 
     createSimpleLightBox();
 
-    loadBtn.classList.add('load-more-visible');
+    totalPages = Math.ceil(images.totalHits / 15);
+    if (page < totalPages) {
+      loadBtn.classList.add('load-more-visible');
+    }
   } catch (error) {
     loadBtn.classList.remove('load-more-visible');
     iziToastCondition();
@@ -56,10 +60,10 @@ async function handleSearchImages(event) {
     event.target.elements.titleImage.value = '';
   }
 }
-const cardByGallery = document.querySelector('.gallery-card');
 
 loadBtn.addEventListener('click', async () => {
   try {
+    loadBtn.classList.remove('load-more-visible');
     loadBtn.insertAdjacentHTML('afterend', '<div class="loader" ></div>');
     const loader = document.querySelector('.loader');
 
@@ -70,23 +74,25 @@ loadBtn.addEventListener('click', async () => {
     loader.remove();
 
     totalPages = Math.ceil(images.totalHits / 15);
-
     if (page > totalPages) {
       throw new Error();
     }
+
     listImages.insertAdjacentHTML(
       'beforeend',
       createMarkupPixabay(images.hits)
     );
 
     createSimpleLightBox();
-
-    const cardHeight = cardByGallery.getBoundingClientRect();
+    const cardByGallery = document.querySelector('.gallery-card');
+    const cardHeight = cardByGallery.getBoundingClientRect().height;
     window.scrollBy({
       left: 0,
       top: cardHeight * 2,
       behavior: 'smooth',
     });
+
+    loadBtn.classList.add('load-more-visible');
   } catch (error) {
     if (page > totalPages) {
       loader.remove();
