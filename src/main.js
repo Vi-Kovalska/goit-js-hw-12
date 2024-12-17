@@ -19,6 +19,7 @@ const form = document.querySelector('.form-search-img');
 export const listImages = document.querySelector('.gallery');
 const loadBtn = document.querySelector('.load-more-btn');
 
+const loader = document.querySelector('.loader');
 let page = 1;
 let totalPages;
 let term;
@@ -36,10 +37,22 @@ async function handleSearchImages(event) {
   listImages.innerHTML = '';
 
   try {
+    listImages.insertAdjacentHTML('afterbegin', '<div class="loader" ></div>');
+    const loader = document.querySelector('.loader');
+
     const images = await fetchPixabay(term, page);
+    console.log(images);
+    loader.remove();
 
     if (images.hits.length === 0) {
-      throw new Error();
+      loader.remove();
+      throw new Error('There are no images matching your search query');
+    }
+
+    totalPages = Math.ceil(images.totalHits / 15);
+    if (page > totalPages) {
+      loader.remove();
+      throw new Error('Ran out of pictures');
     }
 
     listImages.insertAdjacentHTML(
@@ -49,13 +62,20 @@ async function handleSearchImages(event) {
 
     createSimpleLightBox();
 
-    totalPages = Math.ceil(images.totalHits / 15);
-    if (page < totalPages) {
-      loadBtn.classList.add('load-more-visible');
+    loadBtn.classList.add('load-more-visible');
+    if (page === totalPages) {
+      loadBtn.classList.remove('load-more-visible');
     }
   } catch (error) {
+    listImages.insertAdjacentHTML('afterbegin', '<div class="loader" ></div>');
+    const loader = document.querySelector('.loader');
+    loader.remove();
     loadBtn.classList.remove('load-more-visible');
-    iziToastCondition();
+    if (error.message == 'There are no images matching your search query') {
+      iziToastCondition();
+    } else if (error.message == 'Ran out of pictures') {
+      iziToastRanOutOfPictures();
+    }
   } finally {
     event.target.elements.titleImage.value = '';
   }
@@ -94,9 +114,11 @@ loadBtn.addEventListener('click', async () => {
 
     loadBtn.classList.add('load-more-visible');
   } catch (error) {
+    loadBtn.insertAdjacentHTML('afterend', '<div class="loader" ></div>');
+    const loader = document.querySelector('.loader');
+    loader.remove();
+    loadBtn.classList.remove('load-more-visible');
     if (page > totalPages) {
-      loader.remove();
-      loadBtn.classList.remove('load-more-visible');
       return iziToastRanOutOfPictures();
     }
   }
