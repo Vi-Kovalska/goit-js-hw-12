@@ -33,6 +33,7 @@ async function handleSearchImages(event) {
   page = 1;
   term = event.target.elements.titleImage.value.trim();
   if (!term) {
+    loader.classList.replace('loader', 'loader-is-hidden');
     return;
   }
   listImages.innerHTML = '';
@@ -71,6 +72,11 @@ async function handleSearchImages(event) {
       iziToastCondition();
     } else if (error.message == 'Ran out of pictures') {
       iziToastRanOutOfPictures();
+    } else {
+      return iziToast.error({
+        position: 'topRight',
+        message: `We're sorry, we are have a problem...${error.message}`,
+      });
     }
   } finally {
     event.target.elements.titleImage.value = '';
