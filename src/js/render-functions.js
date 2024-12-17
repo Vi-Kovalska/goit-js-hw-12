@@ -36,14 +36,6 @@ export function createMarkupPixabay(arr) {
 
   return markup;
 }
-export function createSimpleLightBox() {
-  const lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: '250',
-    className: 'wrapper',
-  });
-  return lightbox.refresh();
-}
 export function iziToastCondition() {
   return iziToast.show({
     theme: 'dark',

@@ -10,7 +10,6 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchPixabay } from './js/pixabay-api';
 import {
   createMarkupPixabay,
-  createSimpleLightBox,
   iziToastCondition,
   iziToastRanOutOfPictures,
 } from './js/render-functions';
@@ -19,6 +18,12 @@ const form = document.querySelector('.form-search-img');
 export const listImages = document.querySelector('.gallery');
 const loadBtn = document.querySelector('.load-more-btn');
 const loader = document.querySelector('.loader-is-hidden');
+
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: '250',
+  className: 'wrapper',
+});
 
 let page = 1;
 let totalPages;
@@ -59,7 +64,7 @@ async function handleSearchImages(event) {
       createMarkupPixabay(images.hits)
     );
 
-    createSimpleLightBox();
+    lightbox.refresh();
 
     loadBtn.classList.add('load-more-visible');
     if (page === totalPages) {
@@ -107,7 +112,8 @@ loadBtn.addEventListener('click', async () => {
       createMarkupPixabay(images.hits)
     );
 
-    createSimpleLightBox();
+    lightbox.refresh();
+
     const cardByGallery = document.querySelector('.gallery-card');
     const cardHeight = cardByGallery.getBoundingClientRect().height;
     window.scrollBy({
