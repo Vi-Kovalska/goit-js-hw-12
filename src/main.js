@@ -114,12 +114,16 @@ loadBtn.addEventListener('click', async () => {
     });
 
     loadBtn.classList.add('load-more-visible');
+    if (page === totalPages) {
+      loadBtn.classList.remove('load-more-visible');
+      throw new Error('The last page');
+    }
   } catch (error) {
     loadBtn.insertAdjacentHTML('afterend', '<div class="loader" ></div>');
     const loader = document.querySelector('.loader');
     loader.remove();
     loadBtn.classList.remove('load-more-visible');
-    if (page > totalPages) {
+    if (page > totalPages || error.message === 'The last page') {
       return iziToastRanOutOfPictures();
     }
   }
