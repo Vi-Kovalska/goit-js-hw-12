@@ -137,7 +137,11 @@ button:disabled {
     mask-composite: subtract;
     animation: l3 1s infinite linear;
 }
-
+.loader-is-hidden{
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+}
 @keyframes l3 {
     to {
         transform: rotate(1turn)

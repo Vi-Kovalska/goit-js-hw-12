@@ -18,8 +18,8 @@ import {
 const form = document.querySelector('.form-search-img');
 export const listImages = document.querySelector('.gallery');
 const loadBtn = document.querySelector('.load-more-btn');
+const loader = document.querySelector('.loader-is-hidden');
 
-const loader = document.querySelector('.loader');
 let page = 1;
 let totalPages;
 let term;
@@ -27,6 +27,7 @@ let term;
 form.addEventListener('submit', handleSearchImages);
 async function handleSearchImages(event) {
   event.preventDefault();
+  loader.classList.replace('loader-is-hidden', 'loader');
   loadBtn.classList.remove('load-more-visible');
 
   page = 1;
@@ -37,21 +38,18 @@ async function handleSearchImages(event) {
   listImages.innerHTML = '';
 
   try {
-    listImages.insertAdjacentHTML('afterbegin', '<div class="loader" ></div>');
-    const loader = document.querySelector('.loader');
-
     const images = await fetchPixabay(term, page);
 
-    loader.remove();
+    loader.classList.replace('loader', 'loader-is-hidden');
 
     if (images.hits.length === 0) {
-      loader.remove();
+      loader.classList.replace('loader', 'loader-is-hidden');
       throw new Error('There are no images matching your search query');
     }
 
     totalPages = Math.ceil(images.totalHits / 15);
     if (page > totalPages) {
-      loader.remove();
+      loader.classList.replace('loader', 'loader-is-hidden');
       throw new Error('Ran out of pictures');
     }
 
@@ -67,9 +65,7 @@ async function handleSearchImages(event) {
       loadBtn.classList.remove('load-more-visible');
     }
   } catch (error) {
-    listImages.insertAdjacentHTML('afterbegin', '<div class="loader" ></div>');
-    const loader = document.querySelector('.loader');
-    loader.remove();
+    loader.classList.replace('loader', 'loader-is-hidden');
     loadBtn.classList.remove('load-more-visible');
     if (error.message == 'There are no images matching your search query') {
       iziToastCondition();
@@ -84,14 +80,14 @@ async function handleSearchImages(event) {
 loadBtn.addEventListener('click', async () => {
   try {
     loadBtn.classList.remove('load-more-visible');
-    loadBtn.insertAdjacentHTML('afterend', '<div class="loader" ></div>');
-    const loader = document.querySelector('.loader');
-
+    loader.classList.replace('loader-is-hidden', 'loader');
     page += 1;
 
     const images = await fetchPixabay(term, page);
 
-    loader.remove();
+    loader.classList.replace('loader', 'loader-is-hidden');
+
+    loadBtn.classList.add('load-more-visible');
 
     totalPages = Math.ceil(images.totalHits / 15);
     if (page > totalPages) {
@@ -119,9 +115,7 @@ loadBtn.addEventListener('click', async () => {
       throw new Error('The last page');
     }
   } catch (error) {
-    loadBtn.insertAdjacentHTML('afterend', '<div class="loader" ></div>');
-    const loader = document.querySelector('.loader');
-    loader.remove();
+    loader.classList.replace('loader', 'loader-is-hidden');
     loadBtn.classList.remove('load-more-visible');
     if (page > totalPages || error.message === 'The last page') {
       return iziToastRanOutOfPictures();
