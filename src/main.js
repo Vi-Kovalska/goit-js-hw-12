@@ -75,7 +75,7 @@ async function handleSearchImages(event) {
     } else {
       return iziToast.error({
         position: 'topRight',
-        message: "We're sorry, there are no more posts to load",
+        message: `We're sorry, we are have a problem...${error.message}`,
         displayMode: 1,
       });
     }
