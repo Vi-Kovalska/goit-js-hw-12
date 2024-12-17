@@ -41,7 +41,7 @@ async function handleSearchImages(event) {
     const loader = document.querySelector('.loader');
 
     const images = await fetchPixabay(term, page);
-    console.log(images);
+
     loader.remove();
 
     if (images.hits.length === 0) {
@@ -95,6 +95,7 @@ loadBtn.addEventListener('click', async () => {
 
     totalPages = Math.ceil(images.totalHits / 15);
     if (page > totalPages) {
+      loadBtn.classList.remove('load-more-visible');
       throw new Error();
     }
 
